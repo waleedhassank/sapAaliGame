@@ -15,13 +15,16 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="sampleMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="consoleVersion.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="snake.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

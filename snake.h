@@ -9,6 +9,11 @@ enum Direction {
 	UP, DOWN, LEFT, RIGHT
 };
 
+//used in the game specifically
+enum GameState {
+	MAINMENU, MODESELECT, BOXGAME, UNLIMGAME, LEADERBOARD
+};
+
 //used for the Boxed Snake
 class Snake {
 private:
@@ -38,6 +43,8 @@ public:
 
 	Snake(std::pair<int, int> lim);
 
+	void constructor();
+
 	virtual bool move();
 
 	//removes the tail of snake
@@ -50,6 +57,10 @@ public:
 	bool getIndexState(pair<int, int> xy);
 
 	bool getAppleState(pair<int, int> xy);
+
+	void generateApple();
+
+	Direction getDirection();
 
 	void die();
 };

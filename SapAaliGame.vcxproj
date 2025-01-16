@@ -134,6 +134,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="sampleMain.cpp" />
     <ClCompile Include="snake.cpp" />
     <ClCompile Include="consoleVersion.cpp" />
   </ItemGroup>

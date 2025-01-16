@@ -8,10 +8,10 @@ using namespace std;
 
 std::pair<int, int> Snake::appleCoordinates = { -1, -1 }; // Initial value
 
-void generateApple(pair<int, int>& apple, pair<int, int> boardSize, const vector <pair<int, int>>& snakeBody) {
+void Snake::generateApple() {
 	do {
-		apple = { rand() % boardSize.first, rand() % boardSize.second };
-	} while (find(snakeBody.begin(), snakeBody.end(), apple) != snakeBody.end());
+		appleCoordinates = { rand() % limits.first, rand() % limits.second };
+	} while (find(snakeBody.begin(), snakeBody.end(), appleCoordinates) != snakeBody.end());
 }
 
 //\brief Contructor to start off the game
@@ -20,9 +20,20 @@ Snake::Snake(pair<int, int> lim) {
 	direction = RIGHT;
 	size = 0;
 	limits = lim;
-	snakeBody.push_back({ lim.first / 2, lim.second / 2 }); //get it to settle the snake on screen center
 	snakeBody.push_back({ lim.first / 2, (lim.second / 2) + 1 });
-	generateApple(appleCoordinates, limits, snakeBody);
+	snakeBody.push_back({ lim.first / 2, lim.second / 2 }); //get it to settle the snake on screen center
+
+	generateApple();
+}
+
+void Snake::constructor() {
+	direction = RIGHT;
+	size = 0;
+	snakeBody.clear();
+	snakeBody.push_back({ limits.first / 2, (limits.second / 2) + 1 });
+	snakeBody.push_back({ limits.first / 2, limits.second / 2 }); //get it to settle the snake on screen center
+
+	generateApple();
 }
 
 //movement of the boxed snake
@@ -33,13 +44,13 @@ bool Snake::move() {
 	else if (direction == UP) --newHead.first;  // Up
 	else if (direction == DOWN) ++newHead.first; // Down
 
-
 	if (collisionCheck(newHead)) {
 		die();
 		return false;
 	}
 
 	snakeBody.insert(snakeBody.begin(), newHead);
+
 
 	if (newHead == appleCoordinates) {
 		eatApple(); // Grow and generate new apple
@@ -55,7 +66,7 @@ bool Snake::move() {
 void Snake::eatApple() {
 	size++;
 
-	generateApple(appleCoordinates, limits, snakeBody);
+	generateApple();
 }
 
 //\brief Enter the Direction of snake in order UP 0, DOWN 1, LEFT 2, RIGHT 3
@@ -87,5 +98,9 @@ bool Snake::getAppleState(pair<int, int> xy) {
 		return true;
 	}
 	return false;
+}
+
+Direction Snake::getDirection() {
+	return direction;
 }
 
