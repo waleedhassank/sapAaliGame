@@ -76,6 +76,7 @@ bool oneTimeUse = false;
 bool highPerformance = true;
 bool unlimitedMode = false;
 bool gameOver = false;
+int aiseHi = 0;
 int difficultINT = 0;
 int scoreAchieved = 0;
 
@@ -151,6 +152,7 @@ void handleEvents(GameState& gameState) {
 				if (button1.contains(mousePos)) {
 					gameState = MODESELECT;
 					oneTimeUse = false;
+					aiseHi = 0;
 				}
 				else if (button2.contains(mousePos)) {
 					gameState = LEADERBOARD;
@@ -181,13 +183,13 @@ void handleEvents(GameState& gameState) {
 						difficultINT = 0;
 					}
 				}
-				else if (button3.contains(mousePos)) {
+				else if (button4.contains(mousePos)) {
 					if (unlimitedMode)
 						gameState = UNLIMGAME;
 					else
 						gameState = BOXGAME;
 				}
-				else if (button4.contains(mousePos)) {
+				else if (button3.contains(mousePos)) {
 					gameState = MAINMENU;
 				}
 				else if (button5.contains(mousePos)) {
@@ -227,6 +229,13 @@ void handleEvents(GameState& gameState) {
 					unlimsnake.constructor();
 					cout << "BROYO Im back BABY>>>";
 				}
+			}
+			else if (gameState == LEADERBOARD && event.mouseButton.button == Mouse::Left) {
+				
+				if (button1.contains(mousePos)) {
+					gameState = MAINMENU;
+				}
+
 			}
 		}
     }
@@ -291,22 +300,26 @@ void menu() {
 
 		int buttonHeight = 90, vertical =  desktop.height / 1.9;
 		button1 = makeButtons(window, firstFont, 45, Color::White, "PLAY", 450, buttonHeight, desktop.width/2, vertical,
-			Color(0,0,0,50), Color::White, Color(0,0,0,100), Color::White);
+			Color(0,0,0,50), Color::White, Color(255, 255, 255, 100), Color::Black);
 
-		button2 = makeButtons(window, firstFont, 45, Color::White , "STATS", 450, buttonHeight, desktop.width / 2, vertical + buttonHeight * 1.4,
-			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
+		button2 = makeButtons(window, firstFont, 45, Color::White , "HIGH SCORES", 450, buttonHeight, desktop.width / 2, vertical + buttonHeight * 1.4,
+			Color(0, 0, 0, 50), Color::White, Color(255, 255, 255, 100), Color::Black);
 
 		button3 = makeButtons(window, firstFont, 45, Color::White , "EXIT", 450, buttonHeight, desktop.width / 2, vertical + 2 * (buttonHeight * 1.4),
-			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
+			Color(0, 0, 0, 50), Color::White, Color(255, 255, 255, 100), Color::Black);
 
 		window.display();
-		highPerformance = false;
+		aiseHi++;
 		cout << "R";
 	}
 	sf::Vector2i mousePosDum = sf::Mouse::getPosition(window);
 	sf::Vector2f mousePos = window.mapPixelToCoords(mousePosDum);
 	if (button1.contains(mousePos) || button2.contains(mousePos) || button3.contains(mousePos) || button4.contains(mousePos)) {
 		highPerformance = true;
+		aiseHi = 0;
+	}
+	if (aiseHi > 2) {
+		highPerformance = false;
 	}
 }
 
@@ -323,20 +336,19 @@ void modeSelect() {
 		window.draw(modeSelectBg);
 
 		mute.setTexture(muteTexture);
-
 		mute.setScale(Vector2f((desktop.width / 1920.0), (desktop.height / 1080.0)));
-
 		mute.setPosition(Vector2f(desktop.width / 1.17647, desktop.height / 13.1707));
 
 		window.draw(mute);
 
-		int buttonHeight = 60;
+		int buttonHeight = 70; // Increased height slightly
+		int buttonWidth = 250; // Reduced width slightly
 
 		//first option
-		writeText(window, "CHOOSE GAME MODE", secondFont, 50, -1 ,270 , 0, 0, 1, Color::White );
-		button1 = makeButtons(window, firstFont, 40, Color::White, unlimitedMode?"UNLIMITED":"BOXED", 220, buttonHeight, desktop.width / 2, desktop.height / 2.84210526,
-			Color(0, 0, 0, 150), Color::White, Color(0, 0, 0, 200), Color::White);
-		
+		writeText(window, "CHOOSE GAME MODE", secondFont, 50, -1, 270, 0, 0, 1, Color::White);
+		button1 = makeButtons(window, firstFont, 40, Color::White, unlimitedMode ? "UNLIMITED" : "BOXED", 220, buttonHeight, desktop.width / 2, desktop.height / 2.84210526,
+			Color(0, 0, 0, 150), Color::White, Color(255, 255, 255, 100), Color::Black);
+
 		//second option
 		string difficulty;
 		if (difficultINT == 0) {
@@ -349,29 +361,45 @@ void modeSelect() {
 			difficulty = "HARD";
 		}
 
-		writeText(window, "CHOOSE DIFFICULTY", secondFont, 50, -1, 500, 0, 0, 1, Color::White );
-		button2 = makeButtons(window, firstFont, 40, Color::White, difficulty, 220, buttonHeight, desktop.width / 2,desktop.height / 1.8,
-			Color(0, 0, 0, 150), Color::White, Color(0, 0, 0, 200), Color::White);
+		writeText(window, "CHOOSE DIFFICULTY", secondFont, 50, -1, 500, 0, 0, 1, Color::White);
+		button2 = makeButtons(window, firstFont, 40, Color::White, difficulty, 220, buttonHeight, desktop.width / 2, desktop.height / 1.8,
+			Color(0, 0, 0, 150), Color::White, Color(255, 255, 255, 100), Color::Black);
 
-		button3 = makeButtons(window, firstFont, 50, Color::White, "PLAY", 350, buttonHeight * 1.5, desktop.width / 2, desktop.height / 1.2,
-			Color(0, 0, 0, 150), Color::White, Color(0, 0, 0, 200), Color::White);
+		// Adjusted positions and sizes for the "PLAY" and "BACK" buttons
+		int buttonSpacing = 50;
+		int totalWidth = buttonWidth * 2 + buttonSpacing;
+		int centerX = desktop.width / 2;
+
+		button3 = makeButtons(window, firstFont, 40, Color::White, "BACK", buttonWidth, buttonHeight, centerX - totalWidth / 4, desktop.height / 1.3,
+			Color(0, 0, 0, 150), Color::White, Color(255, 255, 255, 100), Color::Black);
+
+		button4 = makeButtons(window, firstFont, 40, Color::White, "PLAY", buttonWidth, buttonHeight, centerX + totalWidth / 4, desktop.height / 1.3,
+			Color(0, 0, 0, 150), Color::White, Color(255, 255, 255, 100), Color::Black);
 
 		window.display();
-		highPerformance = false;
+		aiseHi++;
+
 		cout << "Shown once only";
 	}
 	sf::Vector2i mousePosDum = sf::Mouse::getPosition(window);
 	sf::Vector2f mousePos = window.mapPixelToCoords(mousePosDum);
 	if (button1.contains(mousePos) || button2.contains(mousePos) || button3.contains(mousePos) || button4.contains(mousePos)) {
 		highPerformance = true;
+		aiseHi = 0;
+	}
+	if (aiseHi > 2) {
+		highPerformance = false;
 	}
 }
 
-void gamePlayUnlim(GameState gameState) {
-
+void gamePlayBox(GameState gameState) {
 	window.clear(Color::Black);
 
-	handleKeysUnlim(gameState);
+	handleKeys(gameState);
+
+	if (!snake.move()) {
+		gameOver = true;
+	}
 
 	Sprite gameBg;
 	gameBg.setTexture(gameBgTexture);
@@ -379,19 +407,19 @@ void gamePlayUnlim(GameState gameState) {
 
 	if (gameOver) {
 
-		scoreAchieved = unlimsnake.size;
+		this_thread::sleep_for(chrono::milliseconds(150));
 
-		writeText(window, "GAME OVER", secondFont, 100, 1920 / 2, 1080 / 3, 0, 0, 1, Color::White);
+		scoreAchieved = snake.size;
+
+		writeText(window, "GAME OVER", secondFont, 100, desktop.width / 2, desktop.height / 3, 0, 0, 1, Color::Black);
 
 		button1 = makeButtons(window, firstFont, 40, Color::White, "PLAY AGAIN", desktop.height / 4.32, 75, desktop.width / 1.7, desktop.height / 1.75,
 			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
 		button2 = makeButtons(window, firstFont, 40, Color::White, "BACK TO MENU", desktop.height / 4.32, 75, desktop.width / 2.3, desktop.height / 1.75,
 			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
 	}
-	else{
-
+	else {
 		int boxSize = 25;
-
 		int startingPointX = 1920 / 4;
 		int startingPointY = (1080 / 4) - 100 - (boxSize * 5);
 
@@ -400,7 +428,83 @@ void gamePlayUnlim(GameState gameState) {
 		rect.setSize(Vector2f(boxSize, boxSize));
 		rect.setPosition(Vector2f(-100, -100));
 
-		RectangleShape outerRect(Vector2f(boxSize * lims + 5, boxSize * lims + 5));
+		RectangleShape outerRect(Vector2f(boxSize * (lims - 1) + 5, boxSize * (lims - 1) + 5));
+		outerRect.setOutlineThickness(2);
+		outerRect.setOutlineColor(Color::White);
+		outerRect.setFillColor(Color(0, 0, 0, 150));
+		outerRect.setPosition(Vector2f(startingPointX - 2, startingPointY - 2));
+		window.draw(outerRect);
+
+		for (int i = 0; i < lims; i++) {
+			for (int j = 0; j < lims; j++) {
+				if (!snake.getIndexState({ i, j })) {
+					rect.setPosition(Vector2f(startingPointX + (boxSize * j), startingPointY + (boxSize * i)));
+					rect.setFillColor(Color(255, 255, 255, 60));
+					rect.setOutlineColor(Color::White);
+					window.draw(rect);
+				}
+				else if (snake.getAppleState({ i, j })) {
+					rect.setPosition(Vector2f(startingPointX + (boxSize * j), startingPointY + (boxSize * i)));
+					rect.setFillColor(Color::White);
+					window.draw(rect);
+				}
+			}
+		}
+
+		string scoreString = "SCORE: " + to_string(snake.size);
+		writeText(window, scoreString, firstFont, 50, 1920 / 8, 1080 / 2, 0, 0, 1, Color::White);
+
+		if (difficultINT == 0) {
+			this_thread::sleep_for(chrono::milliseconds(50));
+		}
+		else if (difficultINT == 1) {
+			this_thread::sleep_for(chrono::milliseconds(40));
+		}
+		else {
+			this_thread::sleep_for(chrono::milliseconds(30));
+		}
+	}
+
+	window.display();
+}
+
+void gamePlayUnlim(GameState gameState) {
+	window.clear(Color::Black);
+
+	handleKeysUnlim(gameState);
+
+	if (!unlimsnake.move()) {
+		gameOver = true;
+	}
+
+	Sprite gameBg;
+	gameBg.setTexture(gameBgTexture);
+	window.draw(gameBg);
+
+	if (gameOver) {
+
+		this_thread::sleep_for(chrono::milliseconds(150));
+
+		scoreAchieved = unlimsnake.size;
+
+		writeText(window, "GAME OVER", secondFont, 100, 1920 / 2, 1080 / 3, 0, 0, 1, Color::Black);
+
+		button1 = makeButtons(window, firstFont, 40, Color::White, "PLAY AGAIN", desktop.height / 4.32, 75, desktop.width / 1.7, desktop.height / 1.75,
+			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
+		button2 = makeButtons(window, firstFont, 40, Color::White, "BACK TO MENU", desktop.height / 4.32, 75, desktop.width / 2.3, desktop.height / 1.75,
+			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
+	}
+	else {
+		int boxSize = 25;
+		int startingPointX = 1920 / 4;
+		int startingPointY = (1080 / 4) - 100 - (boxSize * 5);
+
+		RectangleShape rect;
+		rect.setOutlineThickness(1);
+		rect.setSize(Vector2f(boxSize, boxSize));
+		rect.setPosition(Vector2f(-100, -100));
+
+		RectangleShape outerRect(Vector2f(boxSize * (lims - 1) + 5, boxSize * (lims - 1)+ 5));
 		outerRect.setOutlineThickness(2);
 		outerRect.setOutlineColor(Color::White);
 		outerRect.setFillColor(Color(0, 0, 0, 150));
@@ -411,7 +515,7 @@ void gamePlayUnlim(GameState gameState) {
 			for (int j = 0; j < lims; j++) {
 				if (!unlimsnake.getIndexState({ i, j })) {
 					rect.setPosition(Vector2f(startingPointX + (boxSize * j), startingPointY + (boxSize * i)));
-					rect.setFillColor(Color(0, 0, 0, 220));
+					rect.setFillColor(Color(255, 255, 255, 60));
 					rect.setOutlineColor(Color::White);
 					window.draw(rect);
 				}
@@ -424,9 +528,7 @@ void gamePlayUnlim(GameState gameState) {
 			}
 		}
 
-		string scoreString;
-		scoreString = "SCORE: " + to_string(unlimsnake.size);
-
+		string scoreString = "SCORE: " + to_string(unlimsnake.size);
 		writeText(window, scoreString, firstFont, 50, 1920 / 8, 1080 / 2, 0, 0, 1, Color::White);
 
 		if (difficultINT == 0) {
@@ -438,151 +540,57 @@ void gamePlayUnlim(GameState gameState) {
 		else {
 			this_thread::sleep_for(chrono::milliseconds(30));
 		}
-
-	}
-
-	if (!unlimsnake.move()) {
-		gameOver = true;
-	}
-
-	window.display();
-}
-
-void gamePlayBox(GameState gameState) {
-
-	window.clear(Color::Black);
-
-	handleKeys(gameState);
-
-	Sprite gameBg;
-	gameBg.setTexture(gameBgTexture);
-	window.draw(gameBg);
-
-	if (gameOver) {
-
-		scoreAchieved = snake.size;
-
-		writeText(window, "GAME OVER", secondFont, 100, desktop.width / 2, desktop.height / 3, 0, 0, 1, Color::White);
-
-		button1 = makeButtons(window, firstFont, 40, Color::White , "PLAY AGAIN", desktop.height / 4.32, 75, desktop.width / 1.7, desktop.height / 1.75,
-			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
-		button2 = makeButtons(window, firstFont, 40, Color::White, "BACK TO MENU", desktop.height / 4.32, 75, desktop.width / 2.3, desktop.height / 1.75,
-			Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
-	}
-	else{
-
-		int boxSize = 25;
-
-		int startingPointX = 1920 / 4;
-		int startingPointY = (1080 / 4) - 100 - (boxSize * 5);
-
-		RectangleShape rect;
-		rect.setOutlineThickness(1);
-		rect.setSize(Vector2f(boxSize, boxSize));
-		rect.setPosition(Vector2f(-100, -100));
-
-		RectangleShape outerRect(Vector2f(boxSize * lims + 5, boxSize * lims + 5));
-		outerRect.setOutlineThickness(2);
-		outerRect.setOutlineColor(Color::White);
-		outerRect.setFillColor(Color(0,0,0,150));
-		outerRect.setPosition(Vector2f(startingPointX - 2, startingPointY - 2));
-		window.draw(outerRect);
-
-		for (int i = 0; i < lims; i++) {
-			for (int j = 0; j < lims; j++) {
-				if (!snake.getIndexState({ i, j })) {
-					rect.setPosition(Vector2f(startingPointX + (boxSize * j), startingPointY + (boxSize * i)));
-					rect.setFillColor(Color(0,0,0,220));
-					rect.setOutlineColor(Color::White);
-					window.draw(rect);
-				}
-				else if (snake.getAppleState({ i, j })) {
-					rect.setPosition(Vector2f(startingPointX + (boxSize * j), startingPointY + (boxSize * i)));
-					rect.setFillColor(Color::Black);
-					window.draw(rect);
-				}
-			}
-		}
-		handleKeys(gameState);
-
-		string scoreString;
-		scoreString = "SCORE: " + to_string(snake.size);
-
-		writeText(window, scoreString, firstFont, 50, 1920 / 8, 1080 / 2, 0, 0, 1, Color::White);
-
-		if (difficultINT == 0) {
-			this_thread::sleep_for(chrono::milliseconds(50));
-		}
-		else if (difficultINT == 1) {
-			this_thread::sleep_for(chrono::milliseconds(40));
-		}
-		else {
-			this_thread::sleep_for(chrono::milliseconds(30));
-		}
-
-	}
-
-	if (!snake.move()) {
-		gameOver = true;
 	}
 
 	window.display();
 }
 
 void handleKeys(GameState gameState) {
-	Event event;
-	while (window.pollEvent(event)) {
-		if (event.type == event.KeyPressed) {
-			if (event.key.code == Keyboard::Escape) {
-				window.close();
-			}
-			else if (gameState == BOXGAME) {
-				if (event.type == Event::KeyPressed) {
-					// Check for key presses and handle direction changes
-					if (event.key.code == Keyboard::W && snake.getDirection() != 1) {
-						snake.changeDirection(UP); // Up
-					}
-					else if (event.key.code == Keyboard::S && snake.getDirection() != 0) {
-						snake.changeDirection(DOWN); // Down
-					}
-					else if (event.key.code == Keyboard::A && snake.getDirection() != 3) {
-						snake.changeDirection(LEFT); // Left
-					}
-					else if (event.key.code == Keyboard::D && snake.getDirection() != 2) {
-						snake.changeDirection(RIGHT); // Right
-					}
-				}
-			}
-		}
-	}
+    Event event;
+    Direction newDirection = snake.getDirection();
+    while (window.pollEvent(event)) {
+        if (event.type == event.KeyPressed) {
+            if (event.key.code == Keyboard::Escape) {
+                window.close();
+            } else if (gameState == BOXGAME) {
+                Direction currentDirection = snake.getDirection();
+                if (event.key.code == Keyboard::W && currentDirection != DOWN) {
+                    newDirection = UP; // Up
+                } else if (event.key.code == Keyboard::S && currentDirection != UP) {
+                    newDirection = DOWN; // Down
+                } else if (event.key.code == Keyboard::A && currentDirection != RIGHT) {
+                    newDirection = LEFT; // Left
+                } else if (event.key.code == Keyboard::D && currentDirection != LEFT) {
+                    newDirection = RIGHT; // Right
+                }
+            }
+        }
+    }
+    snake.changeDirection(newDirection);
 }
 
 void handleKeysUnlim(GameState gameState) {
-	Event event;
-	while (window.pollEvent(event)) {
-		if (event.type == event.KeyPressed) {
-			if (event.key.code == Keyboard::Escape) {
-				window.close();
-			}
-			else if (gameState == UNLIMGAME) {
-				if (event.type == Event::KeyPressed) {
-					// Check for key presses and handle direction changes
-					if (event.key.code == Keyboard::W && unlimsnake.getDirection() != 1) {
-						unlimsnake.changeDirection(UP); // Up
-					}
-					else if (event.key.code == Keyboard::S && unlimsnake.getDirection() != 0) {
-						unlimsnake.changeDirection(DOWN); // Down
-					}
-					else if (event.key.code == Keyboard::A && unlimsnake.getDirection() != 3) {
-						unlimsnake.changeDirection(LEFT); // Left
-					}
-					else if (event.key.code == Keyboard::D && unlimsnake.getDirection() != 2) {
-						unlimsnake.changeDirection(RIGHT); // Right
-					}
-				}
-			}
-		}
-	}
+    Event event;
+    Direction newDirection = unlimsnake.getDirection();
+    while (window.pollEvent(event)) {
+        if (event.type == event.KeyPressed) {
+            if (event.key.code == Keyboard::Escape) {
+                window.close();
+            } else if (gameState == UNLIMGAME) {
+                Direction currentDirection = unlimsnake.getDirection();
+                if (event.key.code == Keyboard::W && currentDirection != DOWN) {
+                    newDirection = UP; // Up
+                } else if (event.key.code == Keyboard::S && currentDirection != UP) {
+                    newDirection = DOWN; // Down
+                } else if (event.key.code == Keyboard::A && currentDirection != RIGHT) {
+                    newDirection = LEFT; // Left
+                } else if (event.key.code == Keyboard::D && currentDirection != LEFT) {
+                    newDirection = RIGHT; // Right
+                }
+            }
+        }
+    }
+    unlimsnake.changeDirection(newDirection);
 }
 
 void settingsReader() {
@@ -604,6 +612,36 @@ void settingsUpdater() {
 	file.close();
 }
 
+void scoreUpdater(int score) {
+	std::vector<int> scores;
+	std::ifstream fileIn("score.txt");
+
+	// Read existing scores from file
+	int temp;
+	while (fileIn >> temp) {
+		scores.push_back(temp);
+	}
+	fileIn.close();
+
+	// Add the new score
+	scores.push_back(score);
+
+	// Sort the scores in descending order
+	std::sort(scores.begin(), scores.end(), std::greater<int>());
+
+	// Keep only the top 5 scores
+	if (scores.size() > 5) {
+		scores.resize(5);
+	}
+
+	// Write the top 5 scores back to the file
+	std::ofstream fileOut("score.txt");
+	for (const int& s : scores) {
+		fileOut << s << std::endl;
+	}
+	fileOut.close();
+}
+
 void scoreReader(int arr[5]) {
 	std::ifstream file("score.txt");
 
@@ -613,46 +651,48 @@ void scoreReader(int arr[5]) {
 		return;
 	}
 
-	std::vector<int> score;
+	std::vector<int> scores;
 	int temp;
 
 	// Read scores from file
 	while (file >> temp) {
-		score.push_back(temp);
+		scores.push_back(temp);
 	}
 	file.close();
 
-	// Sort the scores
-	std::sort(score.begin(), score.end());
+	// Sort the scores in descending order
+	std::sort(scores.begin(), scores.end(), std::greater<int>());
 
-	// Copy the smallest 5 scores to arr
-	for (size_t i = 0; i < 5 && i < score.size(); i++) {
-		arr[i] = score[i];
+	// Copy the top 5 scores to arr
+	for (size_t i = 0; i < 5 && i < scores.size(); i++) {
+		arr[i] = scores[i];
 	}
 
 	// Fill remaining spots in arr with 0 if there are fewer than 5 scores
-	for (size_t i = score.size(); i < 5; i++) {
+	for (size_t i = scores.size(); i < 5; i++) {
 		arr[i] = 0;
 	}
 }
 
-void scoreUpdater(int score) {
-	ofstream file("score.txt", ios::app);
-
-	file << score << endl;
-
-}
-
 void leaderBoard() {
-	window.clear(Color::Black);
+	window.clear();
+	Sprite leaderBoardSprite;
+	leaderBoardSprite.setTexture(modeSelectTexture);
+	leaderBoardSprite.setScale(Vector2f((desktop.width / 1920.0), (desktop.height / 1080.0)));	
+	leaderBoardSprite.setPosition(0, 0);
+	window.draw(leaderBoardSprite);
+
 	int arr[5];
 	scoreReader(arr);
 	string score;
-	score = "1.\t\t" + to_string(arr[0]) + "\n2.\t\t" + to_string(arr[1]) + "\n3.\t\t" + to_string(arr[2]) + 
+	score = "1.\t\t" + to_string(arr[0]) + "\n2.\t\t" + to_string(arr[1]) + "\n3.\t\t" + to_string(arr[2]) +
 		"\n4.\t\t" + to_string(arr[3]) + "\n5.\t\t" + to_string(arr[4]);
 
-	writeText(window, score, firstFont, 70, desktop.width / 2.1, desktop.height / 1.7, 0, 0, 1, Color::White);
-	
+	writeText(window, score, firstFont, 70, desktop.width / 2.1, desktop.height / 2.2, 0, 0, 1, Color::White);
+
+	button1 = makeButtons(window, firstFont, 40, Color::White, "BACK", 200, 75, desktop.width / 2, desktop.height / 1.35,
+		Color(0, 0, 0, 50), Color::White, Color(0, 0, 0, 100), Color::White);
+
 	window.display();
 }
 

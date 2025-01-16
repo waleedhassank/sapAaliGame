@@ -19,13 +19,8 @@ class Snake {
 private:
 
 	//kept private because the derived class "unlimSnake" has to have its own such function
-	bool collisionCheck(pair<int, int>& newHead) {
-		if (newHead.first < 0 || newHead.first >= limits.first ||
-			newHead.second < 0 || newHead.second >= limits.second ||
-			find(snakeBody.begin(), snakeBody.end(), newHead) != snakeBody.end()) {
-			return true;
-		}
-		return false;
+	bool collisionCheck(const pair<int, int>& newHead) const {
+		return find(snakeBody.begin(), snakeBody.end(), newHead) != snakeBody.end();
 	}
 
 protected:
@@ -46,6 +41,8 @@ public:
 	void constructor();
 
 	virtual bool move();
+
+	bool outOfBounds(const pair<int, int>& pos) const;
 
 	//removes the tail of snake
 	void tailSnap() {
@@ -88,7 +85,7 @@ public:
 	bool move() override {
 		pair<int, int> newHead = snakeBody.front();
 		if (direction == RIGHT) {
-			if (newHead.second >= limits.second) {
+			if (newHead.second >= limits.second - 1) {
 				newHead.second = 0; // Wrap around horizontally
 			}
 			else {
@@ -97,7 +94,7 @@ public:
 		}
 		else if (direction == LEFT) {
 			if (newHead.second <= 0) {
-				newHead.second = limits.second; // Wrap around horizontally
+				newHead.second = limits.second - 1; // Wrap around horizontally
 			}
 			else {
 				--newHead.second;
@@ -105,14 +102,14 @@ public:
 		}
 		else if (direction == UP) {
 			if (newHead.first <= 0) {
-				newHead.first = limits.first; // Wrap around vertically
+				newHead.first = limits.first - 1; // Wrap around vertically
 			}
 			else {
 				--newHead.first;
 			}
 		}
 		else if (direction == DOWN) {
-			if (newHead.first >= limits.first) {
+			if (newHead.first >= limits.first - 1) {
 				newHead.first = 0; // Wrap around vertically
 			}
 			else {
